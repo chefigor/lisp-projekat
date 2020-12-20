@@ -100,10 +100,12 @@
 (defun stampaj (tabla hor ver ind inkr)
   (cond ((< hor 0) '())
         ((>= (- hor inkr) n)(format t "  ")(stampaj tabla hor (1+ ver) 0 (mod (1+ inkr) n)))
-        ((and (equalp (+(floor ind n)(mod ind n )) hor )(equalp (floor ind n) ver ))(format t "~a " (nth ind tabla))(stampaj tabla hor (1+ ver) 0 (mod (1+ inkr) n)))
+        ((< (- hor inkr) 0)(format t "  ")(stampaj tabla hor (1+ ver) 0 (mod (1+ inkr)n)))
+        ;((and (equalp (+(floor ind n)(mod ind n )) hor )(equalp (floor ind n) ver ))(format t "~a " (nth ind tabla))(stampaj tabla hor (1+ ver) 0 (mod (1+ inkr) n)))
         ((> ver (- (* n n) 1 )) (format t "~%")(stampaj tabla (- hor 1) 0 0 0))
-        ((< ind (* n n n))(stampaj tabla hor ver (1+ ind) inkr))
-        (t (princ "- ") (stampaj tabla hor (1+ ver) 0 0))
+        ;((< ind (* n n n))(stampaj tabla hor ver (1+ ind) inkr))
+        (t (princ "- ") (stampaj tabla hor (1+ ver) 0 (mod(1+ inkr)n)))
+        (t (format t"~a "(nth (+(* ver n)(- hor inkr)) tabla))(stampaj tabla hor(1+ ver)0(mod(1+ inkr)n)))
         )
   )
 
@@ -120,7 +122,7 @@
 
 (st (car(nova-stanja tabela 'x)))
 
-(setq n 3)
+(setq n 6)
 (setq tabela (Kreiraj_Tablu n))
 
 (untrace stampaj)
