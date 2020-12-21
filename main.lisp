@@ -24,7 +24,7 @@
 
 (defun stampaj-indekse (indeks n)
   (cond ((equal indeks n) '())
-        (t ( if (< indeks 10) (format t "~a  " indeks) (format t "~a " indeks))(stampaj-indekse (1+ indeks) n)))))
+        (t ( if (< indeks 10) (format t "~a  " indeks) (format t "~a " indeks))(stampaj-indekse (1+ indeks) n))))
 
 
 (defun stampaj (tabla hor ver ind inkr)
@@ -78,54 +78,121 @@
  
 (defun igraj(stanje igrac)
   (let* ((nstanje (unesi stanje igrac)))
-          (progn (st nstanje))
-          (let* ((nnstanje (unesi nstanje '())))
-            (progn (st nnstanje))
-            (igraj nnstanje igrac))))
+    (progn (st nstanje))
+    (if (not (kraj nstanje)) 
+        (let* ((nnstanje (unesi nstanje (not igrac))))
+          (progn (st nnstanje))
+          (if (not (kraj nnstanje)) 
+          (igraj nnstanje igrac))))))
 
 
-Kraj(stanje igrac ind dekr) dekr=4
-If(ind <0 or ind > n*n*n) return false
-
-if((nth ind stanje)==igrac) 
-	{
-	and(
-		Kraj(stanje igrac ind+1 dekr--)
-		Kraj(stanje igrac ind+n dekr--)
-		Kraj(stanje igrac ind+n+1 dekr--)
-		Kraj(stanje igrac ind+n*n dekr--)
-		Kraj(stanje igrac ind+n*n+1 dekr--)
-		)
-		
-	}
 	
-for i,n*n {
-	if((nth i stanje) != '-')
-	Kraj(stanje (nth i stanje) i 4 )
-}
-	
-(defun kraj stanje
+(defun kraj (stanje)
   (loop for i from 0 to (* n n) do
-        (if (not(equal (nth i stanje) '-)) (kr stanje (nth i stanje) i 4) )
+        (if (kraj-hor-desno stanje i) (return 1) 2 ))
+  (loop named outer for i from 0 to n do
+        (loop for j from 0 to n do
+              (if (kraj-hor-napred stanje (+(* i n) j)) (return-from outer 1) ))
+        )
+  (loop for i from 0 to (* n n n) by n do
+        (if(kraj-ver stanje i) (return 1) 2)
+        )
+  (loop for i from 0 to (* n (- n 1) n) by (* n n) do
+        (if (kraj-dia-napred stanje i) (return 1) 2)
+        )
+  (loop for i from 0 to (* n(- n 1)) by n do
+        (if (kraj-dia-levo stanje i) (return 1) 2)
+        )
+  (loop for i from (*(* n n) (- n 1)) to (* n n n ) by n do
+        (if (kraj-dia-desno stanje i) (return 1) 2)
+        )
+  (loop for i from (* n (- n 1)) to (+(*(* n n) (- n 1)) (* n (- n 1)) ) by (* n n) do
+        (if (kraj-dia-nazad stanje i) (return 1) 2)
+        )
+  (loop for i from 0 to n do
+        (if (kraj-hor-dia-lev stanje i) (return 1) 2)
+        )
+  (loop for i from (* n  n (- n 1)) to (+(* n  n (- n 1)) n ) do
+        (if (kraj-hor-dia-des stanje i) (return 1) 2)
+        )
+  (if (kraj-dia-gldl stanje 0) t)
+  (if (kraj-dia-gldd stanje (* n n(- n 1))) t)
+  (if (kraj-dia-glgl stanje (* n (- n 1))) t)
+  (if (kraj-dia-glgd stanje (+(* n n(- n 1))(* n (- n 1)))) t)
+
+  )
+(defun kraj-hor-desno (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (* n n ) ) stanje) (ista ind (+ ind (* n n 2)) stanje) (ista ind (+ ind (* n n 3)) stanje)) (if (ima 'x ind stanje) '10 '-10))
+        (t '())
         )
   )
-                                         
-          
-(defun kr (stanje igrac ind dekr)
-  (cond ((> ind (* n n n)) '())
-        ((< ind 0) '())
-        ((equal (nth ind stanje) igrac)
-         (and 
-          Kr(stanje igrac (+ ind 1) (- dekr 1)) ;gore
-          Kr(stanje igrac (+ ind n) (- dekr 1)) ;vrsta
-          Kr(stanje igrac (+ ind n 1)(- dekr 1)) ;vrsta dijagonalno
-          Kr(stanje igrac (+ ind (* n n )) (- dekr 1)) ;kolona
-          Kr(stanje igrac (+ ind (* n n ) 1) (- dekr 1))
-          )
-         )
+(defun kraj-hor-napred (stanje ind)
+     (cond ((and (puno ind stanje) (ista ind (+ ind n) stanje) (ista ind (+ ind (* n 2)) stanje) (ista ind (+ ind (* n 3)) stanje)) (if (ima 'x ind stanje) '10 '-10))
         (t '())
+        )
   )
+
+(defun kraj-ver (stanje ind)
+     (cond ((and (puno ind stanje) (ista ind (+ ind 1) stanje) (ista ind (+ ind 2) stanje) (ista ind (+ ind 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+        (t '())
+        )
+  )
+
+(defun kraj-dia-napred (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind n 1) stanje) (ista ind (+ ind (* n 2) 2) stanje) (ista ind (+ ind (* n 3) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+
+(defun kraj-dia-levo (stanje ind)
+    (cond ((and (puno ind stanje) (ista ind (+ ind (*(* n n ) 1) 1) stanje) (ista ind (+ ind  (*(* n n ) 2) 2) stanje) (ista ind (+ ind  (*(* n n ) 3) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+(defun kraj-dia-desno (stanje ind)
+      (cond ((and (puno ind stanje) (ista ind (+ ind (-(*(* n n ) 1)) 1) stanje) (ista ind (+ ind  (-(*(* n n ) 2)) 2) stanje) (ista ind (+ ind  (-(*(* n n ) 3)) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+(defun kraj-dia-nazad (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (-(* n 1)) 1) stanje) (ista ind (+ ind  (-(* n 2)) 2) stanje) (ista ind (+ ind (-(* n 3)) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+              (t '())
+              )
+  )
+
+(defun kraj-dia-gldl (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (* n n 1 )(* n 1) 1) stanje) (ista ind (+ ind (* n n 2 )(* n 2) 2) stanje) (ista ind (+ ind (* n n 3 )(* n 3) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+(defun kraj-dia-gldd (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (-(* n n 1)) (* n 1) 1 ) stanje) (ista ind (+ ind (-(* n n 2)) (* n 2) 2 ) stanje) (ista ind (+ ind (-(* n n 3)) (* n 3) 3 ) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+
+(defun kraj-dia-glgl (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (* n n 1) (-(* n 1)) 1 ) stanje) (ista ind (+ ind (* n n 2) (-(* n 2)) 2 ) stanje) (ista ind (+ ind (* n n 3) (-(* n 3)) 3 ) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+
+(defun kraj-dia-glgd (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (-(* n n 1)) (-(* n 1)) 1 ) stanje) (ista ind (+ ind (-(* n n 2)) (-(* n 2)) 2) stanje) (ista ind (+ ind (-(* n n 3)) (-(* n 3)) 3) stanje)) (if (ima 'x ind stanje) '10 '-10))
+            (t '())
+            )
+  )
+(defun kraj-hor-dia-lev (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (* n n 1) (* n 1)) stanje) (ista ind (+ ind (* n n 2) (* n 2)) stanje) (ista ind (+ ind (* n n 3) (* n 3)) stanje)) (if (ima 'x ind stanje) '10 '-10))
+          (t '())
+          )
+  )
+
+(defun kraj-hor-dia-des (stanje ind)
+  (cond ((and (puno ind stanje) (ista ind (+ ind (-(* n n 1)) (* n 1)) stanje) (ista ind (+ ind (-(* n n 2)) (* n 2)) stanje) (ista ind (+ ind  (-(* n n 3)) (* n 3)) stanje)) (if (ima 'x ind stanje) '10 '-10))
+          (t '())
+          )
+  )
+
+
 (4connect)
-
-;;test
-
