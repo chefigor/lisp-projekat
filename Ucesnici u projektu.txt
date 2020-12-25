@@ -1,0 +1,7 @@
+
+R2D2 TEAM
+
+Ime        prezime      indeks
+1)Igor     Jovanović    (16630)
+2)Đorđe    Đorović    	(16083)
+3)David    Azdejković 	(16462)
