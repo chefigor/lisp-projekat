@@ -2,7 +2,8 @@
   (make-list (* n n n) :initial-element  '-))
 
 (defun ista (i j stanje)
-  (equal (nth i stanje)(nth j stanje)))
+                            (equal (nth i stanje)(nth j stanje)))
+
 
 (defun puno (i stanje)
   (not (equal (nth i stanje) '-)))
@@ -14,13 +15,13 @@
   (cond ((null sled) '())
         ((equal (car sled) '-)
          (cons (append pred (list potez) (cdr sled))
-               (sledbenici1 (append pred (list(car sled)))
+               (sledbenici (append pred (list(car sled)))
                            (cdr sled)  potez)))
-         (t (sledbenici1 (append pred (list (car sled)))
+         (t (sledbenici (append pred (list (car sled)))
                         (cdr sled) potez))))
 
 (defun nova-stanja (stanje potez)
-  (sledbenici '() stanje  potez))         
+  (sledbenici '() stanje  potez))
 
 (defun stampaj-indekse (indeks n)
   (cond ((equal indeks n) '())
@@ -53,68 +54,68 @@
         (t (cons (car stanje) (postavi (cdr stanje) oznaka (1- indeks) i)))))
 
 (defun unesi (stanje igrac)
-  (progn (format t "~%Unesite potez (vrsta kolona) ~a :" igrac)
+  (progn (format t "~%Unesite potez (vrsta kolona) ~a :" (if igrac 'X 'O))
     (let* ((potez (read))
            (oznaka (if igrac 'x 'o))
            (izlaz (postavi stanje oznaka (+ (* n n (- (car potez) 1)) (* n(-(cadr potez) 1 ))) (- n 1) )))
       (if (equal stanje izlaz) (unesi stanje igrac) izlaz))))
 
 (defun 4Connect()
- 
+
   (format t "~5%Loading...R2D2(Connect 4 igrica)...~%~%")
     (format t "~%~%Unesite zeljenu dimenziju table ?~% (n mora da bude paran broj)~%> ")
   (setq n (read))
   (if (=(mod n 2)1)  (4Connect))
   (if(> n 6) (4connect))
-               (format t "~%~%Zelim da igram~%(prvi = 1 | drugi = 2)~%> ")
+               (format t "~%~%Zelim da igram~%(X = 1 | O = 2)~%> ")
   (setq play (read))
-              (cond ((equal play 1) (format t "~2%Izabrali ste da igrate prvi~%~%" ) (setq player1 T))  
+              (cond ((equal play 1) (format t "~2%Izabrali ste da igrate prvi~%~%" ) (setq player1 T))
                     ((equal play 2) (format t "~2%Izabrali ste da igrate drugi~%~%" ) (setq player1 '()))
                     (t (format t "~2%Niste nista izbrali od navedenog~%~%" ) (4Connect)))
-  (igraj (Kreiraj_Tablu n) player1) 
+  (igraj (Kreiraj_Tablu n) player1)
   )
 
 
- 
+
 (defun igraj(stanje igrac)
   (let* ((nstanje (unesi stanje igrac)))
     (progn (st nstanje))
-    (if (not (kraj nstanje)) 
+    (if (not (kraj nstanje))
         (let* ((nnstanje (unesi nstanje (not igrac))))
           (progn (st nnstanje))
-          (if (not (kraj nnstanje)) 
-          (igraj nnstanje igrac))))))
+          (if (not (kraj nnstanje))
+          (igraj nnstanje igrac)(format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'X 'O)))) (format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'X 'O)))))
 
 
-	
+
 (defun kraj (stanje)
   (loop for i from 0 to (* n n) do
-        (if (kraj-hor-desno stanje i) (return 1) 2 ))
+        (if (kraj-hor-desno stanje i) (return-from kraj (kraj-hor-desno stanje i))))
   (loop named outer for i from 0 to n do
         (loop for j from 0 to n do
-              (if (kraj-hor-napred stanje (+(* i n) j)) (return-from outer 1) ))
+              (if (kraj-hor-napred stanje (+(* i n) j)) (return-from kraj (kraj-hor-napred stanje (+(* i n) j))) ))
         )
-  (loop for i from 0 to (* n n n) by n do
-        (if(kraj-ver stanje i) (return 1) 2)
+  (loop for i from 0 to (1- (* n n n)) by n do
+        (if(kraj-ver stanje i) (return-from kraj (kraj-ver stanje i)))
         )
   (loop for i from 0 to (* n (- n 1) n) by (* n n) do
-        (if (kraj-dia-napred stanje i) (return 1) 2)
+        (if (kraj-dia-napred stanje i) (return-from kraj (kraj-dia-napred stanje i)))
         )
   (loop for i from 0 to (* n(- n 1)) by n do
-        (if (kraj-dia-levo stanje i) (return 1) 2)
+        (if (kraj-dia-levo stanje i) (return-from kraj (kraj-dia-levo stanje i)))
         )
   (loop for i from (*(* n n) (- n 1)) to (* n n n ) by n do
-        (if (kraj-dia-desno stanje i) (return 1) 2)
+        (if (kraj-dia-desno stanje i) (return-from kraj (kraj-dia-desno stanje i)))
         )
   (loop for i from (* n (- n 1)) to (+(*(* n n) (- n 1)) (* n (- n 1)) ) by (* n n) do
-        (if (kraj-dia-nazad stanje i) (return 1) 2)
+        (if (kraj-dia-nazad stanje i) (return-from kraj (kraj-dia-nazad stanje i)))
         )
   (loop for i from 0 to n do
-        (if (kraj-hor-dia-lev stanje i) (return 1) 2)
+        (if (kraj-hor-dia-lev stanje i) (return-from kraj (kraj-hor-dia-lev stanje i)))
         )
   (loop for i from (* n  n (- n 1)) to (+(* n  n (- n 1)) n ) do
-        (if (kraj-hor-dia-des stanje i) (return 1) 2)
-        )
+        (if (kraj-hor-dia-des stanje i) (return-from kraj (kraj-hor-dia-des stanje i)))
+        )	
   (if (kraj-dia-gldl stanje 0) t)
   (if (kraj-dia-gldd stanje (* n n(- n 1))) t)
   (if (kraj-dia-glgl stanje (* n (- n 1))) t)
