@@ -84,7 +84,7 @@
         (let* ((nnstanje (unesi nstanje (not igrac))))
           (progn (st nnstanje))
           (if (not (kraj nnstanje))
-          (igraj nnstanje igrac)(format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'X 'O)))) (format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'X 'O)))))
+          (igraj nnstanje igrac)(format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'O 'X)))) (format t "~%~%Pobedio igrac ~a ~%>" (if igrac 'X 'O)))))
 
 
 
