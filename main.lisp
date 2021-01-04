@@ -116,10 +116,10 @@
   (loop for i from (* n  n (- n 1)) to (+(* n  n (- n 1)) n ) do
         (if (kraj-hor-dia-des stanje i) (return-from kraj (kraj-hor-dia-des stanje i)))
         )	
-  (if (kraj-dia-gldl stanje 0) t)
-  (if (kraj-dia-gldd stanje (* n n(- n 1))) t)
-  (if (kraj-dia-glgl stanje (* n (- n 1))) t)
-  (if (kraj-dia-glgd stanje (+(* n n(- n 1))(* n (- n 1)))) t)
+  (if (kraj-dia-gldl stanje 0) (kraj-dia-gldl stanje 0))
+  (if (kraj-dia-gldd stanje (* n n(- n 1))) (kraj-dia-gldd stanje (* n n(- n 1))))
+  (if (kraj-dia-glgl stanje (* n (- n 1))) (kraj-dia-glgl stanje (* n (- n 1))))
+  (if (kraj-dia-glgd stanje (+(* n n(- n 1))(* n (- n 1)))) (kraj-dia-glgd stanje (+(* n n(- n 1))(* n (- n 1)))))
 
   )
 (defun kraj-hor-desno (stanje ind)
